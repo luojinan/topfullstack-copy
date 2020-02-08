@@ -18,7 +18,7 @@ export class Course{
   @prop()
   cover:string
 
-  @ApiProperty({description:'课程封面图',example:'课程封面2'})
+  // @ApiProperty({description:'课时id数组',example:['123','456']})
   @arrayProp({itemsRef:'Episode'})
   episodes:Ref<Episode>[]
 }
