@@ -30,7 +30,7 @@ import {Vue,Component} from 'vue-property-decorator';
 
 @Component({})
 export default class Main extends Vue{
-    
+    // element组件要求的数据菜单结构
     menu={
       items:[
       {
