@@ -6,19 +6,23 @@
 $ npm install
 ```
 
-## Running the app
+## 启动后端服务
 
 ```bash
 # development
-$ npm run start
+$ cd server
+$ nest start -w admin
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
+## 启动前端后台管理系统项目
+
+```bash
+# development
+$ cd admin
+$ npm run serve
+
+```
 ## Test
 
 ```bash
