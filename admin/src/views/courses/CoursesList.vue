@@ -44,10 +44,16 @@ export default class Main extends Vue{
     }
     await this.$axios.put(`/apis/courses`,data)
     this.$message.success('更新成功')
+    console.log(index)
     this.fetch()
     done()
   }
   async remove(form){
+    try{
+      await this.$confirm('是否确认删除？')
+    }catch{
+      return
+    }
     await this.$axios.delete(`/apis/courses`,{id:form._id})
     this.$message.success('删除成功')
     this.fetch()
