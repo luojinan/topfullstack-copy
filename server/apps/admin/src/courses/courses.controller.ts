@@ -1,8 +1,13 @@
-import { Controller, Get, Param, Post, Body, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, Query } from '@nestjs/common';
 import { Course } from '@libs/db/models/course.model';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiProperty } from '@nestjs/swagger';
 import { InjectModel } from 'nestjs-typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
+
+class Page{
+  pageSize:number;
+  currentPage:number
+}
 
 @Controller('courses')
 @ApiTags('课程')    // 接口文档标题
@@ -13,8 +18,20 @@ export class CoursesController {
 
   @Get()
   @ApiOperation({summary:'显示课程列表'}) // 接口描述
-  async index(){  // 方法名，后端自用
-    return await this.courseModel.find() // 数据库类方法
+  async index(@Query('page') page:any,@Query('name') name?:string){  // 方法名，后端自用
+    const _filter = {
+      $or : [ //多条件，数组
+        {name : {$regex : name||''}} // 正则模糊匹配
+      ]
+    }
+    page = JSON.parse(page)
+    const allList = await this.courseModel.find(_filter)
+    // page改不了对象
+    const list = await this.courseModel.find(_filter).skip(page.pageSize*(page.currentPage-1)).limit(page.pageSize) // 数据库类方法
+    return {
+      total:allList.length,
+      list
+    }
   }
 
   @Get(':id')

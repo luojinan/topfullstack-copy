@@ -6,6 +6,9 @@
       @row-save="add"
       @row-update="edit"
       @row-del="remove"
+      @search-change="searchChange"
+      :page.sync="page"
+      @on-load="fetch"
       ></avue-crud>
   </div>
 </template>
@@ -24,11 +27,33 @@ export default class Main extends Vue{
     align:'center',
     menuAlign:'center',
     column:[
-      {label:'课程名称',prop:'name'},
+      {
+        label:'课程名称',
+        prop:'name',
+        searchValue:'',
+        search:true,
+        searchRules: [
+          // {
+          // required: true,
+          // message: "请输入课程名称",
+          // trigger: "blur"
+          // }
+        ]
+      },
       {label:'课程封面图',prop:'cover'}
     ]
   }
+  page={
+    pageSize: 5,
+    currentPage: 1,
+    total:0,
+    pageSizes: [5, 10, 20, 30],
+  }
 
+  searchChange(params,done) {
+    done()
+    this.fetch({},params)
+  }
   async add(form,done){
     console.log(form)
     await this.$axios.post('/apis/courses',form)
@@ -58,14 +83,13 @@ export default class Main extends Vue{
     this.$message.success('删除成功')
     this.fetch()
   }
-  async fetch(){
-    const res = await this.$axios.get('/apis/courses')
+  async fetch(page={},searchData={}){
+    let params = {...searchData,page:this.page}
+    console.log(this.page,page)
+    const res = await this.$axios.get('/apis/courses',{params})
     console.log(res)
-    this.data = res
-  }
-
-  created () {
-    this.fetch()
+    this.data = res.list
+    this.page.total = res.total
   }
 }
 </script>
