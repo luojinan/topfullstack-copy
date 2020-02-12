@@ -1,7 +1,7 @@
 <template>
   <div>
     <avue-crud 
-      :data="data" 
+      :data="list" 
       :option="option"
       @row-save="add"
       @row-update="edit"
@@ -20,7 +20,7 @@ import Component from 'vue-class-component'
 
 @Component({})
 export default class Main extends Vue{
-  data = []
+  list = []
   option={
     title:'课程管理',
     // page:false,
@@ -30,6 +30,7 @@ export default class Main extends Vue{
       {
         label:'课程名称',
         prop:'name',
+        row:true,
         searchValue:'',
         search:true,
         searchRules: [
@@ -40,7 +41,14 @@ export default class Main extends Vue{
           // }
         ]
       },
-      {label:'课程封面图',prop:'cover'}
+      {
+        label:'课程封面图',
+        prop:'cover',
+        type:'upload',
+        width:120,
+        listType:'picture-img',
+        action:'/apis/upload'
+      }
     ]
   }
   page={
@@ -88,7 +96,7 @@ export default class Main extends Vue{
     console.log(this.page,page)
     const res = await this.$axios.get('/apis/courses',{params})
     console.log(res)
-    this.data = res.list
+    this.list = res.list
     this.page.total = res.total
   }
 }
