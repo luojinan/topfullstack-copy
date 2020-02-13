@@ -1,81 +1,46 @@
 import { Module } from '@nestjs/common';
 import { UploadController } from './upload.controller';
 import { MulterModule } from '@nestjs/platform-express';
-const crypto = require('crypto');
-const UFile = require('@charbo/ufile-node-sdk');
+import multerCOS from '../utils/multerCos.js'
+let path=require('path');
 
-var options = {
-  PublicKey:'R0BoAAaMLoKOGmPSK1oMIsusN8n4LBPOfu3ruj0r', //api公钥
-  PrivateKey: 'Tu0TOKCnwjK6OVR1yXS2NW6E9bDBziTdR0-IA2HM6TRBgfoG5DmshnFO1UlViE4-', //api私钥
-  bucket:'Default',  //存储空间名
-  domain:'topfullstack-copy.cn-gd.ufileos.com',  //存储空间域名
-  // protocol:'' //网络协议头
-}
-const getFilename = (req, file, cb) => {
-	crypto.pseudoRandomBytes(16, (err, raw) => {
-		cb(err, err ? undefined :
-			(raw.toString('hex') + file.originalname.substr(file.originalname.lastIndexOf('.')))
-		);
-	});
+const cosConfig={
+  //id和key是必须
+  AppId: '**************',
+  SecretId: '****************',
+  SecretKey:'***************',
+  Bucket:'topfullstack-copy-1259367067',
+  Region:'ap-guangzhou',
+  domain:'https://topfullstack-copy-1259367067.cos.ap-guangzhou.myqcloud.com', //cos域名 必选，上传成功返回url需要用到
+  // 可选参数
+  // FileParallelLimit: 3,    // 控制文件上传并发数
+  // ChunkParallelLimit: 3,   // 控制单个文件下分片上传并发数
+  // ChunkSize: 1024 * 1024,  // 控制分片大小，单位 B
+  dir:'upload',                     //cos文件路径
+  onProgress:function(progressData){//进度回调函数，回调是一个对象，包含进度信息
+      console.log(progressData);
+  }
+ 
 };
+let dir=path.resolve(__dirname,'./tmp');
 
-class UFileClass {
-  client: any;
-  getFilename:any
-  // getFilename: (req: any, file: any, cb: any) => void;
-	constructor() {
-		this.client = new UFile(options);
-		this.getFilename = getFilename;
-	}
+//定义仓库
+const storage = multerCOS({
+  cos:cosConfig,
+  //Note:如果你传递的是一个函数，你负责创建文件夹，如果你传递的是一个字符串，multer会自动创建 如果什么都不传 系统自己会生成tmp目录
+  destination: function (req, file, cb) {
+      cb(null, dir);
+  },
+  //自己会生成个随机16字母的文件名和后缀
+  filename:'auto'
+});
 
-	_handleFile(req, file, cb) {
-		if (!this.client) {
-			console.error('对象存储创建失败');
-			return cb({message: '对象存储创建失败'});
-		}
-		this.getFilename(req, file, (err, filename) => {
-      if (err) return cb(err);
-      console.log('文件名',file.stream);
-      // {key:'filename', filePath:'C:\1.jpg'}
-      let qwe:any = { 
-        key:'filename', 
-        filePath:'C:/1.jpg',
-        prefix:'12', 
-        fileRename:filename, 
-        unique: false 
-      }
-			this.client.putFile(qwe).then(
-				result => {
-					return cb(null, {
-						filename: result.name,
-						url     : result.url
-					});
-				}
-			).catch(err => {
-				return cb(err);
-			});
-		});
-	}
-
-	_removeFile(req, file, cb) {
-		if (!this.client) {
-			console.error('oss client undefined');
-			return cb({message: 'oss client undefined'});
-		}
-		this.client.delete(file.filename).then(
-			result => {
-				return cb(null, result);
-			}
-		).catch(err => {
-			return cb(err);
-		});
-	}
-}
+//定义临时文件
 
 @Module({
   imports:[
     MulterModule.register({
-      storage: new UFileClass()
+      storage:storage
     }),
   ],
   controllers: [

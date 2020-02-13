@@ -10,9 +10,7 @@ export class UploadController {
   @UseInterceptors(FileInterceptor('file'))
   async upload (@UploadedFile('file') file) {
     return {
-      data:{
-        url:`http://localhost:3000/uploads/${file.filename}`
-      }
+      data:file
     }
   }
 }
