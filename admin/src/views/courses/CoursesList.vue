@@ -71,11 +71,10 @@ export default class Main extends Vue{
   }
   async edit(form,index,done){
     const data = {
-      id:form._id,
       name:form.name,
       cover:form.cover
     }
-    await this.$axios.put(`/apis/courses`,data)
+    await this.$axios.put(`/apis/courses/${form._id}`,data)
     this.$message.success('更新成功')
     console.log(index)
     this.fetch()

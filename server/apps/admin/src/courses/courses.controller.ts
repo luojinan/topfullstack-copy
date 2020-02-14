@@ -51,13 +51,13 @@ export class CoursesController {
     }
   }
 
-  @Put()
+  @Put(':id')
   @ApiOperation({summary:'修改课程信息'})
   // 后端自用方法，参数获取前端入参，@Body/@Params 参数名:typescript数据类型/类class
   async update (@Param('id') id:string, @Body() updateUsertDto:Course) {
-    await this.courseModel.findOneAndUpdate(id,updateUsertDto)
+    await this.courseModel.findOneAndUpdate({_id:id},updateUsertDto)
     return {
-      msg:'修改成功',
+      msg:'修改成功,更新前数据',
       data:updateUsertDto
     }
   }

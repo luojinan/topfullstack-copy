@@ -6,9 +6,9 @@ let path=require('path');
 
 const cosConfig={
   //id和key是必须
-  AppId: '**************',
-  SecretId: '****************',
-  SecretKey:'***************',
+  AppId: '*******',
+  SecretId:  '*******************',
+  SecretKey:  '************************',
   Bucket:'topfullstack-copy-1259367067',
   Region:'ap-guangzhou',
   domain:'https://topfullstack-copy-1259367067.cos.ap-guangzhou.myqcloud.com', //cos域名 必选，上传成功返回url需要用到
