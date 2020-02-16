@@ -25,6 +25,9 @@ export class CoursesController {
       ]
     }
     page = JSON.parse(page)
+    return {
+      msg:'接口请求成功，证明数据库失败'
+    }
     const allList = await this.courseModel.find(_filter)
     // page改不了对象
     const list = await this.courseModel.find(_filter).skip(page.pageSize*(page.currentPage-1)).limit(page.pageSize) // 数据库类方法
