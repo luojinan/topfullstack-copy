@@ -11,7 +11,7 @@ const dbModels = TypegooseModule.forFeature([User,Course,Episode])
 @Global()
 @Module({
   imports:[
-    TypegooseModule.forRoot('mongodb://134.175.187.48:27017/topfullstack',{
+    TypegooseModule.forRoot('mongodb://127.0.0.1:27017/topfullstack',{
       useNewUrlParser:true,
       useUnifiedTopology:true,
       useCreateIndex:true,
